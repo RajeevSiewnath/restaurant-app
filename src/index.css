@@ -1,13 +1,137 @@
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
+:root {
+    --green: #5BCB02;
+    --white: #FFFFFF;
+    --black: #202125;
+    --light-grey: #F8F8F8;
+    --medium-grey: #EEEEEE;
+    --dark-grey: #A1A2A4;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+* {
+    font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-size: 16px;
+    font-weight: 400;
+    color: var(--black);
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    width: 100vw;
+    height: 100vh;
+}
+
+#root {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    grid-template-columns: 25% auto 25%;
+    grid-template-rows: 25% auto 25%;
+    grid-template-areas: "header header header" "left center right" "footer footer footer";
+    column-gap: 10px;
+    row-gap: 10px;
+    justify-items: center;
+    align-items: center;
+}
+
+strong {
+    font-size: 16px;
+    font-weight: 500;
+}
+
+h1 {
+    font-size: 24px;
+    font-weight: 700;
+}
+
+.highlight {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--green);
+}
+
+.green {
+    color: var(--green);
+}
+
+.white {
+    color: var(--white);
+}
+
+.black {
+    color: var(--black);
+}
+
+.light-grey {
+    color: var(--light-grey);
+}
+
+.medium-grey {
+    color: var(--medium-grey);
+}
+
+.dark-grey {
+    color: var(--dark-grey);
+}
+
+.bg-green {
+    background-color: var(--green);
+}
+
+.bg-white {
+    background-color: var(--white);
+}
+
+.bg-black {
+    background-color: var(--black);
+}
+
+.bg-light-grey {
+    background-color: var(--light-grey);
+}
+
+.bg-medium-grey {
+    background-color: var(--medium-grey);
+}
+
+.bg-dark-grey {
+    background-color: var(--dark-grey);
+}
+
+.center {
+    grid-column-start: center-start;
+    grid-column-end: center-end;
+    grid-row-start: center-start;
+    grid-row-end: center-end;
+}
+
+.center {
+    grid-area: center;
+}
+
+.left {
+    grid-area: left;
+}
+
+.right {
+    grid-area: right;
+}
+
+.header {
+    grid-area: header;
+}
+
+.footer {
+    grid-area: footer;
+}
+
+.stretch {
+    justify-self: stretch;
+    align-self: stretch;
 }
