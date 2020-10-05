@@ -1,0 +1,29 @@
+.error {
+    display: block;
+    color: red;
+    background-color: lightpink;
+    border: 1px solid red;
+    border-radius: 5px;
+}
+
+label {
+    font-size: 75%;
+    font-weight: 700;
+}
+
+input, select {
+    display: block;
+    width: 100%;
+}
+
+.day {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: flex-end;
+}
+
+.field {
+    flex: 1;
+    padding-right: 10px;
+}

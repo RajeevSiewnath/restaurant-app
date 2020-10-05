@@ -1,13 +1,13 @@
 import React, {Component, Context} from "react";
 import RestaurantStoreContext, {RestaurantStore} from "../../contexts/RestaurantStoreContext";
 import {Link, RouteComponentProps} from "react-router-dom";
-import {Restaurant} from "../../types/Restaurant";
+import {RestaurantResponse} from "../../types/Restaurant";
 
 interface Props extends RouteComponentProps {
 }
 
 interface State {
-    restaurants: Array<Restaurant>;
+    restaurants: Array<RestaurantResponse>;
 }
 
 export class Restaurants extends Component<Props, State> {
@@ -35,6 +35,13 @@ export class Restaurants extends Component<Props, State> {
                             <Link to={`/${restaurant.key}`}>{restaurant.name}</Link>
                             &nbsp;
                             <Link to={`/${restaurant.key}/edit`}>[edit]</Link>
+                            &nbsp;
+                            <a href="#" onClick={e => {
+                                e.preventDefault();
+                                if (window.confirm("Are you sure you want to delete this entry?")) {
+                                    this.context.delete(restaurant.key).then(() => this.setState({restaurants: this.context.restaurants}));
+                                }
+                            }}>[delete]</a>
                         </li>
                     )}
                 </ul> :

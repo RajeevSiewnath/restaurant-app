@@ -54,6 +54,7 @@ h1 {
     font-size: 12px;
     font-weight: 700;
     color: var(--green);
+    text-transform: uppercase;
 }
 
 .green {
@@ -134,4 +135,23 @@ h1 {
 .stretch {
     justify-self: stretch;
     align-self: stretch;
+}
+
+.frame {
+    padding: 20px;
+    border: 1px var(--medium-grey) solid;
+    box-shadow: 2px 2px 2px var(--medium-grey);
+    border-radius: 20px;
+}
+
+hr {
+    border: 1px solid var(--black);
+}
+
+hr.light-grey {
+    border: 1px solid var(--light-grey);
+}
+
+hr.medium-grey {
+    border: 1px solid var(--medium-grey);
 }

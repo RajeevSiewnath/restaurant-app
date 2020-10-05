@@ -1,0 +1,10 @@
+.day-slot {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.day-slot > div {
+    display: inline-block;
+}

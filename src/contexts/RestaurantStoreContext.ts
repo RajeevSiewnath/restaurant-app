@@ -1,5 +1,5 @@
 import {action, observable} from "mobx";
-import {Restaurant, RestaurantRequest} from "../types/Restaurant";
+import {RestaurantResponse, RestaurantRequest} from "../types/Restaurant";
 import {v4} from "uuid";
 import {createContext} from "react";
 
@@ -8,7 +8,7 @@ export const ERROR_NOT_FOUND = "Restaurant not found";
 
 export class RestaurantStore {
 
-    @observable restaurants: Array<Restaurant>;
+    @observable restaurants: Array<RestaurantResponse>;
 
     constructor() {
         const storageEntry = localStorage.getItem(LOCAL_STORAGE_KEY);
@@ -19,11 +19,11 @@ export class RestaurantStore {
         localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(this.restaurants));
     }
 
-    async list(): Promise<Array<Restaurant>> {
+    async list(): Promise<Array<RestaurantResponse>> {
         return this.restaurants;
     }
 
-    async get(key: string): Promise<Restaurant> {
+    async get(key: string): Promise<RestaurantResponse> {
         const restaurant = this.restaurants.find(r => r.key === key);
         if (restaurant) {
             return restaurant;
@@ -33,7 +33,7 @@ export class RestaurantStore {
     }
 
     @action
-    async post(restaurant: RestaurantRequest): Promise<Restaurant> {
+    async post(restaurant: RestaurantRequest): Promise<RestaurantResponse> {
         const r = {...restaurant, key: v4()};
         this.restaurants.push(r);
         this.updateToStorage();
@@ -41,7 +41,7 @@ export class RestaurantStore {
     }
 
     @action
-    async put(key: string, restaurant: RestaurantRequest): Promise<Restaurant> {
+    async put(key: string, restaurant: RestaurantRequest): Promise<RestaurantResponse> {
         const idx = this.restaurants.findIndex(r => r.key === key);
         if (idx >= 0) {
             this.restaurants[idx] = {...this.restaurants[idx], ...restaurant};

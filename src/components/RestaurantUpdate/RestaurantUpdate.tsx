@@ -1,14 +1,14 @@
 import React, {Component, Context} from "react";
 import RestaurantStoreContext, {RestaurantStore} from "../../contexts/RestaurantStoreContext";
 import RestaurantForm from "../RestaurantForm/RestaurantForm";
-import {Restaurant, RestaurantRequest} from "../../types/Restaurant";
+import {DayOfWeek, RestaurantResponse, RestaurantRequest} from "../../types/Restaurant";
 import {RouteComponentProps} from "react-router-dom";
 
 interface Props extends RouteComponentProps<{ key: string }> {
 }
 
 interface State {
-    restaurant: Restaurant;
+    restaurant: RestaurantResponse;
 }
 
 export class RestaurantUpdate extends Component<Props, State> {
@@ -19,7 +19,15 @@ export class RestaurantUpdate extends Component<Props, State> {
         restaurant: {
             key: '',
             name: '',
-            openingHours: {},
+            openingHours: {
+                [DayOfWeek.Monday]: [],
+                [DayOfWeek.Tuesday]: [],
+                [DayOfWeek.Wednesday]: [],
+                [DayOfWeek.Thursday]: [],
+                [DayOfWeek.Friday]: [],
+                [DayOfWeek.Saturday]: [],
+                [DayOfWeek.Sunday]: [],
+            },
         }
     };
 

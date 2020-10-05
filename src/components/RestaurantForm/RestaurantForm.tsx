@@ -1,8 +1,9 @@
 import React, {Component} from "react";
-import {ArrayHelpers, ErrorMessage, Field, FieldArray, Form, Formik, FormikState} from "formik";
-import {RestaurantRequest} from "../../types/Restaurant";
+import {ArrayHelpers, ErrorMessage, Field, FieldArray, Form, Formik, FormikProps} from "formik";
+import {DayOfWeek, DaysOfWeek, OpeningHourEntry, RestaurantRequest, TimeType} from "../../types/Restaurant";
 import * as Yup from "yup";
-import {DayOfWeek, DaysOfWeek, OpeningHourEntry, TimeType} from "../../types/OpeningHours";
+import {RestaurantUtils} from "../../utils/RestaurantUtils";
+import "./RestaurantForm.css";
 
 interface Props {
     initialValues: RestaurantRequest;
@@ -12,7 +13,9 @@ interface Props {
 const daySchema = Yup.array().of(
     Yup.object({
         type: Yup.string().required().oneOf([TimeType.Open, TimeType.Close]),
-        value: Yup.number().typeError("Must be a valid number").min(1, "Must be greater than 1"),
+        value: Yup.number().typeError("Must be a valid number")
+            .min(0, "Must be greater than 00:00")
+            .max((60 * 60 * 24) - 1, "Must be smaller than 23:59"),
     })
 );
 
@@ -27,6 +30,13 @@ const validationSchema = Yup.object({
         [DayOfWeek.Saturday]: daySchema,
         [DayOfWeek.Sunday]: daySchema,
     }),
+    valid: Yup.mixed().test(
+        "is-valid-structure",
+        "Time schedule is not valid",
+        function () {
+            return RestaurantUtils.isValid(this.parent);
+        }
+    )
 });
 
 export default class RestaurantForm extends Component<Props> {
@@ -34,7 +44,15 @@ export default class RestaurantForm extends Component<Props> {
     static defaultProps = {
         initialValues: {
             name: '',
-            openingHours: {}
+            openingHours: {
+                [DayOfWeek.Monday]: [],
+                [DayOfWeek.Tuesday]: [],
+                [DayOfWeek.Wednesday]: [],
+                [DayOfWeek.Thursday]: [],
+                [DayOfWeek.Friday]: [],
+                [DayOfWeek.Saturday]: [],
+                [DayOfWeek.Sunday]: [],
+            }
         }
     };
 
@@ -45,61 +63,83 @@ export default class RestaurantForm extends Component<Props> {
             onSubmit={(values: RestaurantRequest) => onSave(values)}
             validationSchema={validationSchema}
         >
-            {(state: FormikState<RestaurantRequest>) =>
+            {(state: FormikProps<RestaurantRequest & { valid?: any }>) =>
                 <Form>
                     <label htmlFor="name">First Name</label>
                     <Field id="name" name="name" placeholder="Name"/>
-                    {state.errors.name && state.touched.name && <div>{state.errors.name}</div>}
+                    <ErrorMessage className="error" name="name"/>
+                    {state.errors && state.errors.valid && <div className="error">Invalid data</div>}
                     {DaysOfWeek.map(d => this.renderDay(d, state))}
+                    <hr/><br/>
                     <button type="submit">Submit</button>
                 </Form>
             }
         </Formik>
     }
 
-    renderDay(key: DayOfWeek, state: FormikState<RestaurantRequest>) {
+    renderDay(key: DayOfWeek, props: FormikProps<RestaurantRequest>) {
         return <FieldArray key={key} name={`openingHours.${key}`}>
             {(arrayHelpers: ArrayHelpers) =>
                 <div>
-                    {key}<br/>
-                    {(state.values.openingHours[key] && state.values.openingHours[key]!.length > 0) ? (
-                        state.values.openingHours[key]!.map((entry: OpeningHourEntry, index: number) => (
-                            <div key={index}>
-                                <label htmlFor={`openingHours.${key}.${index}.type`}>Open/Close</label>
-                                <select name={`openingHours.${key}.${index}.type`}>
-                                    <option value={TimeType.Open}>Open</option>
-                                    <option value={TimeType.Close}>Close</option>
-                                </select>
-                                <ErrorMessage name={`openingHours.${key}.${index}.type`}/>
-                                <label htmlFor={`openingHours.${key}.${index}.value`}>Open/Close</label>
-                                <Field name={`openingHours.${key}.${index}.value`} placeholder="Value"/>
-                                <ErrorMessage name={`openingHours.${key}.${index}.value`}/>
-                                <button
-                                    type="button"
-                                    onClick={() => arrayHelpers.remove(index)}
-                                >-
-                                </button>
-                                <button
-                                    type="button"
-                                    onClick={() => arrayHelpers.insert(index + 1, {
-                                        type: TimeType.Open,
-                                        value: 0
-                                    })}
-                                >+
-                                </button>
+                    <hr/>
+                    <span className="highlight">{key}</span><br/>
+                    {(props.values.openingHours[key] && props.values.openingHours[key]!.length > 0) ? (
+                        props.values.openingHours[key]!.map((entry: OpeningHourEntry, index: number) => (
+                            <div className="day" key={index}>
+                                <div className="field">
+                                    <label htmlFor={`openingHours.${key}.${index}.type`}>Open/Close</label>
+                                    <Field as="select" name={`openingHours.${key}.${index}.type`}>
+                                        <option value={TimeType.Open}>Open</option>
+                                        <option value={TimeType.Close}>Close</option>
+                                    </Field>
+                                    <ErrorMessage className="error" name={`openingHours.${key}.${index}.type`}/>
+                                </div>
+                                <div className="field">
+                                    <label htmlFor={`openingHours.${key}.${index}.value`}>Value</label>
+                                    <input
+                                        type="time"
+                                        name={`openingHours.${key}.${index}.value`}
+                                        placeholder="Time"
+                                        onChange={e => {
+                                            props.handleChange(e);
+                                            props.setFieldValue(`openingHours.${key}.${index}.value`, RestaurantUtils.fromTimeString(e.target.value));
+                                        }}
+                                        onBlur={props.handleBlur}
+                                        value={RestaurantUtils.toTimeString(props.values.openingHours[key][index].value)}
+                                    />
+                                    <ErrorMessage className="error" name={`openingHours.${key}.${index}.value`}/>
+                                </div>
+                                <div>
+                                    <button
+                                        type="button"
+                                        onClick={() => arrayHelpers.remove(index)}
+                                    >-
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={() => arrayHelpers.insert(index + 1, {
+                                            type: TimeType.Open,
+                                            value: 0
+                                        })}
+                                    >+
+                                    </button>
+                                </div>
                             </div>
                         ))
                     ) : (
-                        <button type="button" onClick={() => arrayHelpers.push({
-                            type: TimeType.Open,
-                            value: 0
-                        })}>
-                            Add a time entry
-                        </button>
+                        <div className="day">
+                            <button type="button" onClick={() => arrayHelpers.push({
+                                type: TimeType.Open,
+                                value: 0
+                            })}>
+                                Add a time entry
+                            </button>
+                        </div>
                     )}
                 </div>
             }
         </FieldArray>
     }
+
 
 }
