@@ -8,14 +8,19 @@ import {RestaurantView} from "../RestaurantView/RestaurantView";
 
 function App() {
     return (
-        <Router>
-            <Switch>
-                <Route path="/" exact component={Restaurants}/>
-                <Route path="/add" exact component={RestaurantCreate}/>
-                <Route path="/:key/edit" component={RestaurantUpdate}/>
-                <Route path="/:key" component={RestaurantView}/>
-            </Switch>
-        </Router>
+        <React.Fragment>
+            <div className="header">
+                <a className="black" href="/"><h1>Restaurant app</h1></a>
+            </div>
+            <Router>
+                <Switch>
+                    <Route path="/" exact component={Restaurants}/>
+                    <Route path="/add" exact component={RestaurantCreate}/>
+                    <Route path="/:key/edit" component={RestaurantUpdate}/>
+                    <Route path="/:key" component={RestaurantView}/>
+                </Switch>
+            </Router>
+        </React.Fragment>
     );
 }
 
